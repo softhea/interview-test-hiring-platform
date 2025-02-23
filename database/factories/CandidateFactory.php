@@ -22,7 +22,10 @@ class CandidateFactory extends Factory
         $softSkills = ['Diplomacy', 'Team player', 'Leadership', 'Sales experience', 'Presentation abilities', 'Public speaking', 'Conflict management'];
         shuffle($softSkills);
 
+        static $userId = 2;
+
         return [
+            'user_id' => $userId++,
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'description' => $this->faker->text,
