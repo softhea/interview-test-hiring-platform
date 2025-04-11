@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Candidate;
 use App\Models\Company;
 use App\Notifications\ContactNotification;
+use App\Services\CandidateService;
 use App\Services\HiringService;
 use App\Services\NotificationService;
 use Exception;
@@ -14,24 +15,13 @@ use Illuminate\Http\JsonResponse;
 
 class CandidateController extends Controller
 {
-    public function index()
+    public function index(CandidateService $candidateService)
     {
-        $candidates = Candidate::with('receivedNotifications')->get();
         $company = Company::with('wallet')->find(1);
         $coins = $company->getCoins();
 
-        $desiredSoftSkills = [];
-        foreach ($candidates as $candidate) {
-            $softSkills = json_decode($candidate->soft_skills, true);
-            foreach ($softSkills as $softSkill) {
-                $desiredSoftSkills[] = $softSkill;
-            }
-            $candidate->can_be_hired = 
-                !$candidate->isHired() 
-                && $candidate->hasBeenContactedByUserIdBefore($company->getUserId());
-        }
-        $desiredSoftSkills = array_unique($desiredSoftSkills);
-        $desiredSoftSkills = array_slice($desiredSoftSkills, 0, 2);
+        $candidates = $candidateService->list($company->getUserId());
+        $desiredSoftSkills = $candidateService->getDesiredSoftSkills();
 
         return view(
             'candidates.index', 

@@ -4,8 +4,8 @@
       <h1 class="text-4xl font-bold">Candidates</h1>
     </div>
     <div class="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-5">
-      <div v-for="candidate in listedCandidates" class="rounded overflow-hidden shadow-lg"
-            v-show="!candidate.knows_wordpress">
+      <div v-for="candidate in candidates" class="rounded overflow-hidden shadow-lg"
+            v-show="!candidate.strengths.includes('Wordpress')">
         <img class="w-full" src="/avatar.png" alt="">
         <div class="px-6 py-4">
           <div class="font-bold text-xl mb-2">{{candidate.name}}</div>
@@ -18,12 +18,12 @@
           >{{strength}}</span>
         </div>
         <div class="px-6 pb-2">
-          <span v-for="skill in candidate.soft_skills" 
+          <span v-for="skill in candidate.softSkills" 
               class="inline-block rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
               v-bind:class="getBgColor(desiredSoftSkills.includes(skill))"
           >{{skill}}</span>
         </div>
-        <div class="px-6 pt-4 pb-2" v-show="candidate.is_hired">
+        <div class="px-6 pt-4 pb-2" v-show="candidate.isHired">
           <span 
             class="inline-block bg-red-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
           >Is Hired</span>
@@ -33,7 +33,7 @@
             @click="contact(candidate.id)"
           >Contact</button>
           <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 hover:bg-teal-100 rounded shadow"
-            v-show="candidate.can_be_hired"
+            v-show="candidate.canBeHired"
             @click="hire(candidate.id)"
           >Hire</button>
         </div>
@@ -49,16 +49,7 @@ export default {
       desiredStrengths: [
         'Vue.js', 'Laravel', 'PHP', 'TailwindCSS'
       ],
-      listedCandidates: this.candidates,
     }
-  },
-  created() {
-    this.listedCandidates.forEach(candidate => {
-      candidate.soft_skills = JSON.parse(candidate.soft_skills);
-      candidate.strengths = JSON.parse(candidate.strengths);
-
-      candidate.knows_wordpress = candidate.strengths.includes('Wordpress');
-    });
   },
   methods: {
     getBgColor(isHighlighted) {
@@ -70,7 +61,7 @@ export default {
           alert(response.data.message);
 
           let candidateIndex = this.listedCandidates.findIndex((obj => obj.id == id));
-          this.listedCandidates[candidateIndex].can_be_hired = !this.listedCandidates[candidateIndex].is_hired;
+          this.listedCandidates[candidateIndex].canBeHired = !this.listedCandidates[candidateIndex].isHired;
 
           document.getElementById('no-of-coins').textContent = response.data.coins;
         })
@@ -86,8 +77,8 @@ export default {
           alert(response.data.message);
 
           let candidateIndex = this.listedCandidates.findIndex((obj => obj.id == id));
-          this.listedCandidates[candidateIndex].is_hired = true;
-          this.listedCandidates[candidateIndex].can_be_hired = false;
+          this.listedCandidates[candidateIndex].isHired = true;
+          this.listedCandidates[candidateIndex].canBeHired = false;
 
           document.getElementById('no-of-coins').textContent = response.data.coins;
         })
