@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\CandidateDto;
-use App\Repositories\CandidateRepository;
+use App\Interfaces\CandidateRepositoryInterface;
 
 class CandidateService
 {
@@ -16,7 +16,7 @@ class CandidateService
         return $this->desiredSoftSkills;
     }
 
-    public function __construct(private CandidateRepository $candidateRepository) {}
+    public function __construct(private CandidateRepositoryInterface $candidateRepository) {}
 
     /**
      * @return CandidateDto[]

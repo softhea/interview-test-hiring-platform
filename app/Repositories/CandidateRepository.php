@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Candidate;
-use App\Interfaces\CandidateInterface;
+use App\Interfaces\CandidateRepositoryInterface;
 
-class CandidateRepository
+class CandidateRepository implements CandidateRepositoryInterface
 {
-    /**
-     * @return CandidateInterface[]
-     */
     public function findAll()
     {
         return Candidate::with('receivedNotifications')->get();
